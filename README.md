@@ -21,5 +21,6 @@ give hints to a renderer as to what might be an interesting field to
 draw.
 
 The code is designed to be Clojurey and show interesting language
-features rather than run efficiently; updating the :cells member of
-the arena directly once per frame would certainly be a lot faster!
+features (the class was mostly done in Python and Java) rather than
+run efficiently; updating the :cells member of the arena directly once
+per frame would certainly be a lot faster, for example!
