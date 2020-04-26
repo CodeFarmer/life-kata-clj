@@ -1,7 +1,7 @@
 (ns life-kata.core
   (:require [quil.core :as q]
             [quil.middleware :as m]
-            [life-kata.life :as l])
+            [life-kata.unbounded-life :as l])
   (:gen-class))
 
 
@@ -13,11 +13,15 @@
 
   (q/frame-rate 5)
 
-  (l/random-arena 80 80 0.2))
+  {:arena (l/random-arena 80 80 0.2)
+   :port-left   -20
+   :port-right  100
+   :port-top    -20
+   :port-bottom 100})
 
 
 (defn update-state [state]
-  (l/next-arena state))
+  (update-in state [:arena] l/next-arena))
 
 
 (defn draw-state! [state]
@@ -25,22 +29,26 @@
   (q/background 0 0 0)
   (q/fill 255 255 255)
 
-  (let [{:keys [width height]} state]
+  (let ;; [{:keys [width height]} (:arena state)]
+      
+      [{:keys [arena port-left port-right port-top port-bottom]} state
+       width  (- port-right port-left)
+       height (- port-bottom port-top)]
 
     (let [block-width (/ SCREEN_WIDTH width)
           block-height (/ SCREEN_HEIGHT height)]
-      
-      (doseq [x (range 0 width)
-              y (range 0 height)
-              :when (l/alive? state x y)]
 
-        (q/rect (* x block-width)
-                (* y block-height)
+      (println [port-left port-right port-top port-bottom] [width height] [block-width block-height])
+      
+      (doseq [[x y] (l/live-cells arena)]
+
+        (q/rect (* (- x port-left) block-width)
+                (* (- y port-top)  block-height)
                 block-width block-height)))))
 
 
 (defn -main [& args]
-  (q/sketch :title "You spin my circle right round"
+  (q/sketch :title "Life finds a way"
             :size [SCREEN_WIDTH SCREEN_HEIGHT]
             :setup setup!
             :update update-state

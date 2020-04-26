@@ -17,12 +17,6 @@
    :height height
    :cells (into [] (repeat (* width height) true))})
 
-
-(defn random-arena [width height weight]
-  {:width width
-   :height height
-   :cells (into [] (take (* width height)) (repeatedly #(< (rand) weight)))})
-
 (defn -cell-index [arena x y]
   (+ x (* y (width arena))))
 
@@ -33,6 +27,16 @@
           (< y 0)) false
     (get (:cells arena) (-cell-index arena x y))))
 
+(defn random-arena [width height weight]
+  {:width width
+   :height height
+   :cells (into [] (take (* width height)) (repeatedly #(< (rand) weight)))})
+
+(defn live-cells [arena]
+  (for [x (range (width arena))
+        y (range (height arena))
+        :when (alive? arena x y)]
+    [x y]))
 
 (defn arena-from-strings [aseq]
   "Create arenas from strings, mostly for visually understandable testing"
