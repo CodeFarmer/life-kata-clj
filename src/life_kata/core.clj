@@ -38,7 +38,7 @@
     (let [block-width (/ SCREEN_WIDTH width)
           block-height (/ SCREEN_HEIGHT height)]
 
-      (println [port-left port-right port-top port-bottom] [width height] [block-width block-height])
+      ;; (println [port-left port-right port-top port-bottom] [width height] [block-width block-height])
       
       (doseq [[x y] (l/live-cells arena)]
 
