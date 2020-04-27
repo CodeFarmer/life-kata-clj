@@ -66,15 +66,7 @@
 
   (testing "making cells alive"
     (is (alive? (with-alive (empty-arena)
-                  0 0) 0 0)))
-
-  (testing "making cells dead"
-    (let [fa (full-arena 2 2)
-          wd (with-dead fa 0 0)]
-      (is (not (alive? wd 0 0)))
-      (is (alive? wd 0 1))
-      (is (alive? wd 1 0))
-      (is (alive? wd 1 1)))))
+                  0 0) 0 0))))
 
 
 (deftest counting-neighbours-test

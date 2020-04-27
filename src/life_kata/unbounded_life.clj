@@ -7,45 +7,29 @@
 ;; NOTE that empty rows should be removed, rather than left as empty sets
 
 (defn empty-arena []
-  {})
+  #{})
 
 
 (defn full-arena [w h]
-  (reduce (fn [amap x]
-            (assoc amap x (into #{} (range w)))) {}
-          (range h)))
+  (into #{} (for [x (range w)
+                  y (range h)]
+              [x y])))
 
 
 (defn alive? [arena x y]
-  (let [row (get arena y)]
-    (if row
-      (contains? row x)
-      false)))
+  (contains? arena [x y]))
 
 
 (defn arena-from-strings [aseq]
-  (reduce (fn [a i]
-            (let [row (get aseq i)
-                  row' (into #{}
-                           (filter #(not (= \. (get row %)))
-                                   (range (count row))))]
-              (if (empty? row') a
-                  (assoc a i row'))))
-          {}
-          (range (count aseq))))
+  (into #{}
+        (for [y (range (count aseq))
+              x (range (count (get aseq y)))
+              :when (not (= \. (get (get aseq y) x)))]
+          [x y])))
 
 
 (defn with-alive [a x y]
-  (let [row (get a y #{})]
-    (assoc a y (conj row x))))
-
-
-(defn with-dead [a x y]
-  (let [row (get a y)
-        row' (disj row x)]
-    (if (empty? row')
-      (dissoc a y)
-      (assoc a y row'))))
+  (conj a [x y]))
 
 
 (defn random-arena [width height weight]
@@ -80,9 +64,7 @@
       :default false)))
 
 (defn live-cells [arena]
-  (for [y (keys arena)
-        x (get arena y)]
-    [x y]))
+  (seq arena))
 
 ;; this is the observation that the only potentially alive cells in the next generation are within one space of a presently-alive cell
 (defn -interesting-cells [arena]
@@ -97,5 +79,5 @@
             (if (survives? arena x y)
               (with-alive a x y)
               a))
-          {}
+          (empty-arena)
           (-interesting-cells arena)))
